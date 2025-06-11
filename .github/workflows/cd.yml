@@ -12,6 +12,7 @@ permissions:
 jobs:
   dokcer-build:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -19,4 +20,3 @@ jobs:
       - name: Build Docker image from Dockerfile
         run: |
           docker build -t my_calculator .
-        
