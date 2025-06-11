@@ -1,0 +1,22 @@
+name: CD pipeline
+
+on:
+  workflow_run:
+    workflows: ['Multi Python Code Test']
+    types: [completed]
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  dokcer-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: action/checkout@v4
+
+      - name: Build Docker image from Dockerfile
+        run: |
+          docker build -t my_calculator .
+        
