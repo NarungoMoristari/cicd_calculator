@@ -4,13 +4,14 @@ on: [push]
 
 permissions:
   contents: read
+  security-events: write
 
 jobs:
   python-test-101:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.13", "3.10", "3.8"]
+        python-version: ["3.13", "3.10", "3.8", "3.9"]
     
     steps:
       - uses: actions/checkout@v3
@@ -34,3 +35,18 @@ jobs:
       - name: Launch Flake8 review
         run: |
           flake8 ./calculator
+  
+  trivy-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+      - name: Run Trivy vulnerability scanner in repo mode
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: "."
+          ignore-unfixed: true
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL'
